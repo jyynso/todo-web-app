@@ -1,0 +1,9 @@
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.csproj.AssemblyReference.cache
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.AssemblyInfoInputs.cache
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.AssemblyInfo.cs
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.csproj.CoreCompileInputs.cache
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.sourcelink.json
