@@ -20,6 +20,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseMiddleware<TodoAPI.Middleware.RequestLoggingMiddleware>();
+app.UseMiddleware<TodoAPI.Middleware.CheckApiKeyMiddleware>();
+
 app.MapControllers();
 
 app.Run();
