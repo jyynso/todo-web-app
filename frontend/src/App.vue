@@ -4,10 +4,8 @@ import DisplayTask from './components/DisplayTask.vue';
 </script>
 
 <template>
-  <header>
-    <div class="flex flex-col items-center">
-      <Header />
-      <DisplayTask />
-    </div>
-  </header>
+  <main class="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 p-10">
+    <Header />
+    <DisplayTask />
+  </main>
 </template>
