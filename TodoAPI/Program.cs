@@ -8,6 +8,10 @@ builder.Services.AddControllers();
 https://aka.ms/aspnetcore/swashbucklehttps://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<TodoAPI.Services.ITodoService, TodoAPI.Services.TodoService>();
+builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
+		p.WithOrigins("http://localhost:5174")   
+		 .AllowAnyHeader()
+		 .AllowAnyMethod()));
 
 builder.Services.AddSwaggerGen(o =>
 {
@@ -47,6 +51,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors();
 
 app.UseMiddleware<TodoAPI.Middleware.RequestLoggingMiddleware>();
 app.UseMiddleware<TodoAPI.Middleware.CheckApiKeyMiddleware>();
