@@ -1,21 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TodoAPI.Model;
+using TodoAPI.Services;
 
-namespace TodoAPI
+namespace TodoAPI.Controllers
 {
+	[ApiController]
+	[Route("api/[controller]")]
 	public class TodoItemsController : ControllerBase
 	{
+		private readonly ITodoService _service;
+		public TodoItemsController(ITodoService service)
+		{	
+			_service = service;
+		}
+
 		[HttpGet]
 		public async Task<IActionResult> GetTodoItems()
 		{
-			return Ok();
+			var items = await _service.GetTodoItemsAsync();
+			return Ok(items);
 		}
 
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetTodoItem(int id)
 		{
-			return Ok();
+			return Ok();		
 		}
 
 		[HttpPut("{id}")]
@@ -27,7 +37,8 @@ namespace TodoAPI
 		[HttpPost]
 		public async Task<IActionResult> CreateTodoItem(TodoItem todoItem)
 		{
-			return Ok();
+			var created = await _service.CreateTodoItemAsync(todoItem);
+			return CreatedAtAction(nameof(GetTodoItem), new { id = created.Id }, created);
 		}
 
 		[HttpDelete("{id}")]

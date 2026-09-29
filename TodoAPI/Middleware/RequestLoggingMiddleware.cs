@@ -1,4 +1,6 @@
-﻿namespace TodoAPI.Middleware
+﻿using System.Diagnostics;
+
+namespace TodoAPI.Middleware
 {
 	public class RequestLoggingMiddleware
 	{
@@ -11,27 +13,15 @@
 		}
 		public async Task InvokeAsync(HttpContext context)
 		{
-			//request logging 
-			context.Request.EnableBuffering();
-			var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
-			context.Request.Body.Position = 0;
-			
-			_logger.LogInformation($"Incoming Request: {context.Request.Method} {context.Request.Path} \nBody: {requestBody}");
-
-			//capture response
-			var originalBodyStream = context.Response.Body;
-			using var responseBody = new MemoryStream();
-			context.Response.Body = responseBody;
-
-			await _next(context); 
-
-			context.Response.Body.Seek(0, SeekOrigin.Begin);
-			var responseText = await new StreamReader(context.Response.Body).ReadToEndAsync();
-			context.Response.Body.Seek(0, SeekOrigin.Begin);
-
-			_logger.LogInformation($"Outgoing Response: {context.Response.StatusCode} \nBody: {responseText}");
-
-			await responseBody.CopyToAsync(originalBodyStream);
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+			await _next(context);
+			sw.Stop();
+			_logger.LogInformation("Request {method} {url} => {statusCode} in {elapsedMilliseconds}ms",
+				context.Request.Method, 
+				context.Request.Path, 
+				context.Response.StatusCode,
+				sw.ElapsedMilliseconds);
 		}
 	}
 }

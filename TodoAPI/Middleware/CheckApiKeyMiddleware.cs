@@ -1,4 +1,4 @@
-﻿namespace TodoAPI.Middleware
+﻿	namespace TodoAPI.Middleware
 {
 	public class CheckApiKeyMiddleware
 	{
