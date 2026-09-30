@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
+import type { Task } from '../types/Task'
 
 const API = 'https://localhost:7290/api/TodoItems'
 const headers = { 'X-API-KEY': 'apikey1234' }
 
-const props = defineProps<{ open: boolean }>()
+const props = defineProps<{ open: boolean; task: Task | null }>()
 const emit = defineEmits<{
   close: []
   saved: []
@@ -13,40 +14,39 @@ const emit = defineEmits<{
 const title = ref('')
 const description = ref('')
 const dueDate = ref('')
-const titleInput = ref<HTMLInputElement | null>(null)
+const titleInput = ref<HTMLInputElement>(null)
 
 watch(() => props.open, async (isOpen) => {
-  if (isOpen) {
-    title.value = ''
-    description.value = ''
-    dueDate.value = ''
+  if (isOpen && props.task) {
+    title.value = props.task.title
+    description.value = props.task.description
+    dueDate.value = props.task.dueDate
     await nextTick()
     titleInput.value?.focus()
   }
 })
 
 async function save() {
-  if (!title.value.trim()) return
+  if (!props.task || !title.value.trim()) return
   try {
-    const res = await fetch(API, {
-      method: 'POST',
+    const res = await fetch(`${API}/${props.task.id}`, {
+      method: 'PUT',
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        ...props.task,
         title: title.value.trim(),
         description: description.value,
         dueDate: dueDate.value || null,
-        isCompleted: false,
       }),
     })
     if (!res.ok) {
-      console.error('Failed to add task', res.status)
+      console.error('Failed to update task', res.status)
       return
     }
     emit('saved')
     emit('close')
-    location.reload()
   } catch (err) {
-    console.error('Failed to add task', err)
+    console.error('Failed to update task', err)
   }
 }
 </script>
@@ -56,9 +56,11 @@ async function save() {
     <div
       v-if="open"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs"
-      @click.self="emit('close')">
+      @click.self="emit('close')"
+    >
       <form
-        class="flex flex-col gap-2 p-8 drop-shadow-sm bg-[#FAF2C3] w-full max-w-md"
+        :class="task?.isCompleted ? 'bg-[#D3E0C3]' : 'bg-[#FAF2C3]'"
+        class="flex flex-col gap-2 p-8 drop-shadow-sm w-full max-w-md"
         @submit.prevent="save"
         @keydown.esc="emit('close')">
         <input
