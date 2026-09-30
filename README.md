@@ -1,4 +1,11 @@
+<<<<<<< Updated upstream
 
+=======
+<<<<<<< HEAD
+=======
+
+>>>>>>> temp-work
+>>>>>>> Stashed changes
 ## ToDo App
 
 ### Prerequisites
@@ -12,7 +19,15 @@
 cd TodoAPI
 
 # Run the  server
+<<<<<<< Updated upstream
 dotnet run --launch-profile https 
+=======
+<<<<<<< HEAD
+dotnet run 
+=======
+dotnet run --launch-profile https 
+>>>>>>> temp-work
+>>>>>>> Stashed changes
 ```
 ### Frontend
 ```
@@ -25,4 +40,11 @@ npm install
 # Run the server
 npm run dev
 ```
+<<<<<<< Updated upstream
 
+=======
+<<<<<<< HEAD
+=======
+
+>>>>>>> temp-work
+>>>>>>> Stashed changes

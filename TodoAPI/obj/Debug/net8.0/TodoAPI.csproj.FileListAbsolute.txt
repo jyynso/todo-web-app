@@ -27,7 +27,6 @@ C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\staticwebassets.build.js
 C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.csproj.Up2Date
 C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\TodoAPI.dll
 C:\Users\ecwt\projects\todoapp\TodoAPI\obj\Debug\net8.0\refint\TodoAPI.dll
