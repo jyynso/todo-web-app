@@ -1,21 +1,23 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import type { Task } from '../types/Task'
 
 const props = defineProps<{ open: boolean }>()
+
 const emit = defineEmits<{
   close: []
-  save: [task: { title: string; description: string; notes: string }]
+  save: [task: Omit<Task, 'id'>]
 }>()
 
 const title = ref('')
 const description = ref('')
-const notes = ref('')
+const dueDate = ref('')
 
 watch(() => props.open, (isOpen) => {
   if (isOpen) {
     title.value = ''
     description.value = ''
-    notes.value = ''
+    dueDate.value = ''
   }
 })
 
@@ -24,7 +26,7 @@ function save() {
   emit('save', {
     title: title.value,
     description: description.value,
-    notes: notes.value,
+    dueDate: dueDate.value,
   })
   emit('close')
 }
@@ -57,9 +59,9 @@ function save() {
         />
         <span class="w-full border-t border-black/40" />
         <textarea
-          v-model="notes"
+          v-model="dueDate"
           rows="2"
-          placeholder="Notes"
+          placeholder="dueDate"
           class="bg-transparent text-sm text-black/60 outline-none resize-none placeholder:text-black/40"
         />
         <span class="w-full border-t border-black/40" />
