@@ -78,7 +78,7 @@ async function save() {
         <textarea
           v-model="dueDate"
           rows="2"
-          placeholder="dueDate"
+          placeholder="Due date"
           class="bg-transparent text-sm text-black/60 outline-none resize-none placeholder:text-black/40"/>
         <span class="w-full border-t border-black/40" />
         <div class="flex flex-row text-sm text-black/70 gap-2">
