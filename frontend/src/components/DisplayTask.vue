@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import type { Task } from '../types/Task';
 import EditTaskModal from './EditTaskModal.vue';
-import Confirmation from './Confirmation.vue';
+import ConfirmationModal from './ConfirmationModal.vue';
 
 const props = defineProps<{ filter: 'all' | 'done' | 'not done'; searchId: number | null }>();
 const API = 'https://localhost:7290/api/TodoItems';
@@ -88,7 +88,7 @@ onMounted(loadTasks);
     :task="editing"
     @saved="loadTasks"
     @close="editModalOpen = false" />
-  <Confirmation
+  <ConfirmationModal
     :open="confirmModalOpen"
     :message="taskToDelete?.title ? `Are you sure you want to delete ${taskToDelete.title}?` : undefined"
     @confirmed="deleteTask"

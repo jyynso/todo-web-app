@@ -14,7 +14,7 @@ const emit = defineEmits<{
 const title = ref('')
 const description = ref('')
 const dueDate = ref('')
-const titleInput = ref<HTMLInputElement>(null)
+const titleInput = ref<HTMLInputElement | null>(null)
 
 watch(() => props.open, async (isOpen) => {
   if (isOpen && props.task) {
