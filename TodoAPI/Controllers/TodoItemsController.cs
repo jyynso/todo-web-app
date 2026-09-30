@@ -26,14 +26,18 @@ namespace TodoAPI.Controllers
 		public async Task<IActionResult> GetTodoItem(int id)
 		{
 			var item = await _service.GetTodoItemAsync(id);	
-			return item is null ? NotFound() : Ok(item);
+			return item is null 
+				? NotFound($"Todo item with ID {id} not found.") 
+				: Ok(item);
 		}
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateTodoItem(int id, TodoItem todoItem)
 		{
 			var updated = await _service.UpdateTodoItemAsync(id, todoItem);
-			return updated is null ? NotFound() : Ok(updated);
+			return updated is null 
+				? NotFound($"Todo item with ID {id} not found.") 
+				: Ok(updated);
 		}
 
 		[HttpPost]
@@ -47,7 +51,9 @@ namespace TodoAPI.Controllers
 		public async Task<IActionResult> DeleteTodoItem(int id)
 		{
 			var deleted = await _service.DeleteTodoItemAsync(id);
-			return deleted ? NoContent() : NotFound();
+			return deleted 
+				? NoContent()				
+				: NotFound($"Todo item with ID {id} not found.");
 		}
 	}
 }
