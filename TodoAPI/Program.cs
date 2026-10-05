@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at 
 https://aka.ms/aspnetcore/swashbucklehttps://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSingleton<TodoAPI.Services.ITodoService, TodoAPI.Services.TodoService>();
+builder.Services.AddScoped<TodoAPI.Services.ITodoService, TodoAPI.Services.TodoService>();
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
 		p.WithOrigins("http://localhost:5174")   
 		 .AllowAnyHeader()
