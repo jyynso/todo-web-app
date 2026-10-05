@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using TodoAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,9 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
 		p.WithOrigins("http://localhost:5174")   
 		 .AllowAnyHeader()
 		 .AllowAnyMethod()));
+
+builder.Services.AddDbContext<TodoDbContext>(options =>
+		options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSwaggerGen(o =>
 {
