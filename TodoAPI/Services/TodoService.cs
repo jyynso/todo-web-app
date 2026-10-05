@@ -15,7 +15,9 @@ namespace TodoAPI.Services
 
 		public async Task<List<TodoItem>> GetTodoItemsAsync()
 		{
-			return await _context.TodoItems.ToListAsync();
+			return await _context.TodoItems
+				.Where(t => !t.IsDeleted)
+				.ToListAsync();
 		}
 
 		public async Task<TodoItem> GetTodoItemAsync(int id)
