@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TodoAPI.Data;
 
@@ -11,9 +12,11 @@ using TodoAPI.Data;
 namespace TodoAPI.Migrations
 {
     [DbContext(typeof(TodoDbContext))]
-    partial class TodoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261005061232_AddDateOnlyOnModel")]
+    partial class AddDateOnlyOnModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,8 +35,7 @@ namespace TodoAPI.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly>("DueDate")
                         .HasColumnType("date");
@@ -46,15 +48,11 @@ namespace TodoAPI.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TodoItems", t =>
-                        {
-                            t.HasCheckConstraint("DueDateCannotBeInThePast", "[DueDate] >= CAST(GETDATE() AS DATE)");
-                        });
+                    b.ToTable("TodoItems");
                 });
 #pragma warning restore 612, 618
         }
