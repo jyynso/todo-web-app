@@ -16,7 +16,7 @@ dotnet run --launch-profile https
 
 ### Frontend
 ```bash
-# Open another termninal and go to frontend folder
+# Open another termninal tab and go to frontend folder
 cd frontend
 
 # install dependencies
