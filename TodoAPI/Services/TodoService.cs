@@ -17,6 +17,7 @@ namespace TodoAPI.Services
 		{
 			return await _context.TodoItems.ToListAsync();
 		}
+
 		public async Task<TodoItem> GetTodoItemAsync(int id)
 		{
 			return await _context.TodoItems.FirstOrDefaultAsync(t => t.Id == id);
@@ -34,7 +35,8 @@ namespace TodoAPI.Services
 			var todoItem = await _context.TodoItems.FirstOrDefaultAsync(t => t.Id == id);
 			if (todoItem != null)
 			{
-				_context.TodoItems.Remove(todoItem);
+				//_context.TodoItems.Remove(todoItem);
+				todoItem.IsDeleted = true;
 				await _context.SaveChangesAsync();
 				return true;
 			}
