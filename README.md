@@ -2,10 +2,10 @@
 
 ### Prerequisites
 
-* .NET 8.0 SDK
+* .NET 9.0 SDK
 * Node.js
 
-### Backend  (ASP.NET Core 8)
+### Backend  (ASP.NET Core 9)
 ```bash
 # Go to the API project folder
 cd TodoAPI
@@ -15,7 +15,7 @@ dotnet run --launch-profile https
 ```
 
 ### Frontend
-```
+```bash
 # Open another termninal and go to frontend folder
 cd frontend
 
