@@ -1,43 +1,58 @@
-﻿using TodoAPI.Model;
+﻿using TodoAPI.Data;
+using TodoAPI.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace TodoAPI.Services
 {
 	public class TodoService : ITodoService
 	{
-		private readonly List<TodoItem> todoItems = new();
-		private int nextId = 1;
-		public Task<List<TodoItem>> GetTodoItemsAsync()
+		private readonly TodoDbContext _context;
+
+		public TodoService(TodoDbContext context)
 		{
-			return Task.FromResult(todoItems);
-		}
-		public Task<TodoItem> GetTodoItemAsync(int id)
-		{
-			return Task.FromResult(todoItems.FirstOrDefault(t => t.Id == id));
+			_context = context;
 		}
 
-		public Task<TodoItem> CreateTodoItemAsync(TodoItem todoItem)
+		public async Task<List<TodoItem>> GetTodoItemsAsync()
 		{
-			todoItem.Id = nextId++;
-			todoItems.Add(todoItem);
-			return Task.FromResult(todoItem);
+			return await _context.TodoItems.ToListAsync();
+		}
+		public async Task<TodoItem> GetTodoItemAsync(int id)
+		{
+			return await _context.TodoItems.FirstOrDefaultAsync(t => t.Id == id);
 		}
 
-		public Task<bool> DeleteTodoItemAsync(int id)
+		public async Task<TodoItem> CreateTodoItemAsync(TodoItem todoItem)
 		{
-			return Task.FromResult(todoItems.RemoveAll(t => t.Id == id) > 0);
+			_context.TodoItems.Add(todoItem);
+			await _context.SaveChangesAsync();
+			return todoItem;
 		}
 
-		public Task<TodoItem> UpdateTodoItemAsync(int id, TodoItem todoItem)
+		public async Task<bool> DeleteTodoItemAsync(int id)
+		{		
+			var todoItem = await _context.TodoItems.FirstOrDefaultAsync(t => t.Id == id);
+			if (todoItem != null)
+			{
+				_context.TodoItems.Remove(todoItem);
+				await _context.SaveChangesAsync();
+				return true;
+			}
+			return false;
+		}
+
+		public async Task<TodoItem?> UpdateTodoItemAsync(int id, TodoItem todoItem)
 		{
-			var existingItem = todoItems.FirstOrDefault(t => t.Id == id);
+			var existingItem = await _context.TodoItems.FirstOrDefaultAsync(t => t.Id == id);
 			if (existingItem != null)
 			{
 				existingItem.Title = todoItem.Title;
 				existingItem.Description = todoItem.Description;
 				existingItem.DueDate = todoItem.DueDate;
 				existingItem.IsCompleted = todoItem.IsCompleted;
+				await _context.SaveChangesAsync();
 			}
-			return Task.FromResult(existingItem);
+			return existingItem;
 		}
 	}
 }
