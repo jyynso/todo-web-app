@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
 using TodoAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 //Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at 
-https://aka.ms/aspnetcore/swashbucklehttps://aka.ms/aspnetcore/swashbuckle
+//https://aka.ms/aspnetcore/swashbucklehttps://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<TodoAPI.Services.ITodoService, TodoAPI.Services.TodoService>();
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
@@ -49,19 +50,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
+	app.MapScalarApiReference(o => o.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json"));
 }
 
+
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.UseCors();
-
+app.UseAuthorization();
 app.UseMiddleware<TodoAPI.Middleware.RequestLoggingMiddleware>();
 app.UseMiddleware<TodoAPI.Middleware.CheckApiKeyMiddleware>();
-
 app.MapControllers();
-
 app.Run();
