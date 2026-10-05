@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
 import type { Task } from '../types/Task'
-
-const API = 'https://localhost:7290/api/TodoItems'
-const headers = { 'X-API-KEY': 'apikey1234' }
+import api from '@/services/api';
 
 const props = defineProps<{ open: boolean; task: Task | null }>()
 const emit = defineEmits<{
@@ -20,7 +18,16 @@ watch(() => props.open, async (isOpen) => {
   if (isOpen && props.task) {
     title.value = props.task.title
     description.value = props.task.description
-    dueDate.value = props.task.dueDate
+
+    if (props.task.dueDate) {
+      const d = props.task.dueDate instanceof Date
+        ? props.task.dueDate
+        : new Date(props.task.dueDate)
+      dueDate.value = d.toISOString().split('T')[0] ?? ''
+    } else {
+      dueDate.value = ''
+    }
+
     await nextTick()
     titleInput.value?.focus()
   }
@@ -29,20 +36,12 @@ watch(() => props.open, async (isOpen) => {
 async function save() {
   if (!props.task || !title.value.trim()) return
   try {
-    const res = await fetch(`${API}/${props.task.id}`, {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...props.task,
-        title: title.value.trim(),
-        description: description.value,
-        dueDate: dueDate.value || null,
-      }),
+    await api.put(`/${props.task.id}`, {
+      ...props.task,
+      title: title.value.trim(),
+      description: description.value,
+      dueDate: dueDate.value ? new Date(dueDate.value) : new Date(),
     })
-    if (!res.ok) {
-      console.error('Failed to update task', res.status)
-      return
-    }
     emit('saved')
     emit('close')
   } catch (err) {
@@ -64,8 +63,8 @@ async function save() {
         @submit.prevent="save"
         @keydown.esc="emit('close')">
         <input
+          ref="titleInput"
           v-model="title"
-          autofocus
           placeholder="Title"
           class="bg-transparent text-black/70 outline-none placeholder:text-black/40"/>
         <span class="w-full border-t border-black/40" />

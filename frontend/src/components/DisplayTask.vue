@@ -3,12 +3,13 @@ import { ref, onMounted, computed } from 'vue';
 import type { Task } from '../types/Task';
 import EditTaskModal from './EditTaskModal.vue';
 import ConfirmationModal from './ConfirmationModal.vue';
+import api from '@/services/api';
 
 const props = defineProps<{ filter: 'all' | 'done' | 'not done'; searchId: number | null }>();
-const API = 'https://localhost:7290/api/TodoItems';
+
+
 const task = ref<Task[]>([]);
 const taskToDelete = ref<Task | null>(null);
-const headers = { 'X-API-KEY': 'apikey1234' };
 const editModalOpen = ref(false);
 const editing = ref<Task | null>(null);
 const confirmModalOpen = ref(false);
@@ -24,28 +25,18 @@ const filteredTask = computed(() => {
 });
 
 async function loadTasks() {
-  const response = await fetch(API, {
-    headers,
-  });
-  if (!response.ok) {
-    throw new Error('Failed to load tasks');
+  try {
+    const response = await api.get<Task[]>('');
+    task.value = response.data
+  } catch (err) {
+    console.error('Failed to load tasks', err)
   }
-  const data = await response.json();
-  task.value = data;
 }
 
 async function updateTaskStatus(t: Task) {
   try {
-    const res = await fetch(`${API}/${t.id}`, {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...t, isCompleted: !t.isCompleted }),
-    })
-    if (!res.ok) {
-      console.error('Failed to update task', res.status)
-      return
-    }
-    await loadTasks()
+    await api.put(`/${t.id}`, { ...t, isCompleted: !t.isCompleted, });
+    await loadTasks();
   } catch (err) {
     console.error('Failed to update task', err)
   }
@@ -65,17 +56,12 @@ async function deleteTask() {
   const t = taskToDelete.value
   if (!t) return
   try {
-    const res = await fetch(`${API}/${t.id}`, { method: 'DELETE', headers })
-    if (!res.ok) {
-      console.error('Failed to delete task', res.status)
-      return
-    }
-    await loadTasks()
-  } catch (err) {
-    console.error('Failed to delete task', err)
-  } finally {
+    await api.delete(`/${t.id}`);
+    await loadTasks();
     confirmModalOpen.value = false
     taskToDelete.value = null
+  } catch (err) {
+    console.error('Failed to delete task', err)
   }
 }
 

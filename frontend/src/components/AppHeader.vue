@@ -29,11 +29,11 @@ function setFilter(f: Filter) {
   <div class="flex w-full flex-col items-center gap-8">
     <div class="flex w-full flex-row items-center justify-between">
       <div class="flex items-center gap-4">
-         <h1 class="text-black/80">ToDo</h1>
+         <h1 class="font-semibold text-black/80">ToDo</h1>
       </div>
 
       <div class="flex items-center gap-4">
-        <button @click="showModal = true" class="hover:underline cursor-pointer text-sm text-black/50">Add task</button>
+        <button @click="showModal = true" class="hover:underline cursor-pointer text-sm text-black/50">Add Task</button>
         <p>|</p>
         <form @submit.prevent="handleSearch" class="flex items-center gap-2">
           <input
@@ -41,13 +41,13 @@ function setFilter(f: Filter) {
             v-model.number="search"
             class="text-sm   outline-none underline w-26"
             placeholder="search by id..."/>
-          <button type="submit" class="text-black/60 cursor-pointer hover:underline text-sm">search</button>
+          <button type="submit" class="text-black/60 cursor-pointer hover:underline text-sm">Search</button>
         </form>
         <p>|</p>
-        <h3 class="text-sm text-black/70">filter by:</h3>
-        <button @click="setFilter('all')" class="hover:underline cursor-pointer text-sm text-black/60">all</button>
-        <button @click="setFilter('done')" class="hover:underline cursor-pointer text-sm text-black/60">done</button>
-        <button @click="setFilter('not done')" class="hover:underline cursor-pointer text-sm text-black/60">not done</button>
+        <h3 class="text-sm text-black/70">Filter By:</h3>
+        <button @click="setFilter('all')" class="hover:underline cursor-pointer text-sm text-black/60">All</button>
+        <button @click="setFilter('done')" class="hover:underline cursor-pointer text-sm text-black/60">Done</button>
+        <button @click="setFilter('not done')" class="hover:underline cursor-pointer text-sm text-black/60">Not Done</button>
       </div>
     </div>
   </div>
