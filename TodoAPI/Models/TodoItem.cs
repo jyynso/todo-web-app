@@ -7,6 +7,7 @@
 		public string Description { get; set; }
 		public string DueDate { get; set; }
 		public bool IsCompleted { get; set; }
-		
+		public bool IsDeleted { get; set; }
+
 	}
 }
