@@ -40,7 +40,7 @@ function setFilter(f: Filter) {
             type="number"
             v-model.number="search"
             class="text-sm   outline-none underline w-26"
-            placeholder="search by id..."/>
+            placeholder="Search By Id..."/>
           <button type="submit" class="text-black/60 cursor-pointer hover:underline text-sm">Search</button>
         </form>
         <p>|</p>
