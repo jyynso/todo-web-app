@@ -29,7 +29,10 @@
 
   async function save() {
     clearError()
-    if (!title.value.trim()) return
+    if (!title.value.trim()) {
+      message.value = 'Title is required'
+      return
+    }
     try {
       await api.post('', {
         title: title.value.trim(),
