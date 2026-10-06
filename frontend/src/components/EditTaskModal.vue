@@ -14,6 +14,7 @@ const title = ref('')
 const description = ref('')
 const dueDate = ref('')
 const titleInput = ref<HTMLInputElement | null>(null)
+const today = new Date().toLocaleDateString('en-CA')
 const { message, handleError, clearError } = HandleError()
 
 watch(() => props.open, async (isOpen) => {
@@ -80,6 +81,7 @@ async function save() {
         <input
           v-model="dueDate"
           type="date"
+          :min="today"
           required
           class="bg-transparent text-sm text-black/60 outline-none placeholder:text-black/40"/>
         <span class="w-full border-t border-black/40" />
