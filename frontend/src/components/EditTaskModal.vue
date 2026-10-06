@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
 import type { Task } from '../types/Task'
-
-const API = 'https://localhost:7290/api/TodoItems'
-const headers = { 'X-API-KEY': 'apikey1234' }
+import api from '@/services/api';
+import { HandleError } from '@/composables/HandleError'
 
 const props = defineProps<{ open: boolean; task: Task | null }>()
 const emit = defineEmits<{
@@ -15,12 +14,17 @@ const title = ref('')
 const description = ref('')
 const dueDate = ref('')
 const titleInput = ref<HTMLInputElement | null>(null)
+const { message, handleError, clearError } = HandleError()
 
 watch(() => props.open, async (isOpen) => {
   if (isOpen && props.task) {
     title.value = props.task.title
     description.value = props.task.description
+
     dueDate.value = props.task.dueDate
+      ? String(props.task.dueDate).slice(0, 10)
+      : ''
+
     await nextTick()
     titleInput.value?.focus()
   }
@@ -28,25 +32,19 @@ watch(() => props.open, async (isOpen) => {
 
 async function save() {
   if (!props.task || !title.value.trim()) return
+  clearError()
   try {
-    const res = await fetch(`${API}/${props.task.id}`, {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...props.task,
-        title: title.value.trim(),
-        description: description.value,
-        dueDate: dueDate.value || null,
-      }),
+    await api.put(`/${props.task.id}`, {
+      ...props.task,
+      title: title.value.trim(),
+      description: description.value,
+      dueDate: dueDate.value,
+      isCompleted: props.task.isCompleted,
     })
-    if (!res.ok) {
-      console.error('Failed to update task', res.status)
-      return
-    }
     emit('saved')
     emit('close')
   } catch (err) {
-    console.error('Failed to update task', err)
+    handleError(err, 'Failed to update task')
   }
 }
 </script>
@@ -60,12 +58,13 @@ async function save() {
     >
       <form
         :class="task?.isCompleted ? 'bg-[#D3E0C3]' : 'bg-[#FAF2C3]'"
-        class="flex flex-col gap-2 p-8 drop-shadow-sm w-full max-w-md"
+        class="flex flex-col gap-2 p-8 m-6 drop-shadow-sm w-full max-w-md"
         @submit.prevent="save"
         @keydown.esc="emit('close')">
+        <p v-if="message" class="text-red-500">{{ message }}</p>
         <input
+          ref="titleInput"
           v-model="title"
-          autofocus
           placeholder="Title"
           class="bg-transparent text-black/70 outline-none placeholder:text-black/40"/>
         <span class="w-full border-t border-black/40" />
@@ -75,11 +74,11 @@ async function save() {
           placeholder="Description"
           class="bg-transparent text-sm text-black/60 outline-none resize-none placeholder:text-black/40"/>
         <span class="w-full border-t border-black/40" />
-        <textarea
+        <input
           v-model="dueDate"
-          rows="2"
-          placeholder="Due date"
-          class="bg-transparent text-sm text-black/60 outline-none resize-none placeholder:text-black/40"/>
+          type="date"
+          required
+          class="bg-transparent text-sm text-black/60 outline-none placeholder:text-black/40"/>
         <span class="w-full border-t border-black/40" />
         <div class="flex flex-row text-sm text-black/70 gap-2">
           <button type="submit" class="hover:underline">Save</button>

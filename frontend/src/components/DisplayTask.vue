@@ -3,16 +3,31 @@ import { ref, onMounted, computed } from 'vue';
 import type { Task } from '../types/Task';
 import EditTaskModal from './EditTaskModal.vue';
 import ConfirmationModal from './ConfirmationModal.vue';
+import api from '@/services/api';
+import axios from 'axios';
 
 const props = defineProps<{ filter: 'all' | 'done' | 'not done'; searchId: number | null }>();
-const API = 'https://localhost:7290/api/TodoItems';
+
 const task = ref<Task[]>([]);
 const taskToDelete = ref<Task | null>(null);
-const headers = { 'X-API-KEY': 'apikey1234' };
 const editModalOpen = ref(false);
 const editing = ref<Task | null>(null);
 const confirmModalOpen = ref(false);
+const message = ref('');
 
+function handleError(err: unknown, fallback: string) {
+  if (axios.isAxiosError(err) && err.response?.status === 404) {
+    message.value = err.response.data;
+  } else {
+    message.value = fallback;
+  }
+  console.error(fallback, err)
+}
+
+function formatDate(d: string) {
+  return new Date(d.slice(0, 10) + 'T00:00:00')
+    .toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
+}
 
 const filteredTask = computed(() => {
   if (props.searchId !== null) {
@@ -24,30 +39,21 @@ const filteredTask = computed(() => {
 });
 
 async function loadTasks() {
-  const response = await fetch(API, {
-    headers,
-  });
-  if (!response.ok) {
-    throw new Error('Failed to load tasks');
+  try {
+    const response = await api.get<Task[]>('');
+    task.value = response.data
+  } catch (err) {
+    console.error('Failed to load tasks', err)
   }
-  const data = await response.json();
-  task.value = data;
 }
 
 async function updateTaskStatus(t: Task) {
+  message.value = '';
   try {
-    const res = await fetch(`${API}/${t.id}`, {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...t, isCompleted: !t.isCompleted }),
-    })
-    if (!res.ok) {
-      console.error('Failed to update task', res.status)
-      return
-    }
-    await loadTasks()
+    await api.put(`/${t.id}`, { ...t, isCompleted: !t.isCompleted, });
+    await loadTasks();
   } catch (err) {
-    console.error('Failed to update task', err)
+    handleError(err, 'Failed to update task')
   }
 }
 
@@ -63,19 +69,15 @@ function confirmDelete(t: Task) {
 
 async function deleteTask() {
   const t = taskToDelete.value
+  message.value = '';
   if (!t) return
   try {
-    const res = await fetch(`${API}/${t.id}`, { method: 'DELETE', headers })
-    if (!res.ok) {
-      console.error('Failed to delete task', res.status)
-      return
-    }
-    await loadTasks()
-  } catch (err) {
-    console.error('Failed to delete task', err)
-  } finally {
+    await api.delete(`/${t.id}`);
+    await loadTasks();
     confirmModalOpen.value = false
     taskToDelete.value = null
+  } catch (err) {
+    handleError(err, 'Failed to delete task')
   }
 }
 
@@ -93,6 +95,7 @@ onMounted(loadTasks);
     :message="taskToDelete?.title ? `Are you sure you want to delete ${taskToDelete.title}?` : undefined"
     @confirmed="deleteTask"
     @canceled="confirmModalOpen = false" />
+  <p v-if="message" class="text-red-500">{{ message }}</p>
   <div v-if="filteredTask && filteredTask.length > 0" class="flex w-full flex-col gap-2">
     <div class="grid w-full grid-cols-[repeat(auto-fit,minmax(12rem,16rem))] justify-center gap-4">
       <span v-for="t in filteredTask" :key="t.id" class="flex flex-col gap-2 p-8 drop-shadow-sm" :class="t.isCompleted ? 'bg-[#D8F0B6]' : 'bg-[#FAF2C3]'">
@@ -100,7 +103,7 @@ onMounted(loadTasks);
         <p class="text-xs text-black/60">Task Id: {{ t.id }}</p>
         <span class="w-full border-t border-black/40" />
         <p class="text-sm text-black/60">{{ t.description }}</p>
-        <p class="text-sm text-black/60">Due @ {{ t.dueDate }}</p>
+        <p class="text-sm text-black/60">Due @ {{ formatDate(t.dueDate) }}</p>
         <span class="w-full border-t border-black/40" />
         <p class="text-sm text-black/60">Completed: {{ t.isCompleted ? 'yes' : 'no' }}</p>
         <span class="w-full border-t border-black/40" />
