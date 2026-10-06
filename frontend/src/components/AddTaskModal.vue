@@ -1,5 +1,6 @@
   <script setup lang="ts">
   import { ref, watch, nextTick } from 'vue'
+  import { HandleError } from '@/composables/HandleError'
   import api from '@/services/api';
 
   const props = defineProps<{ open: boolean }>()
@@ -12,10 +13,12 @@
   const description = ref('')
   const dueDate = ref('')
   const titleInput = ref<HTMLInputElement | null>(null)
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toLocaleDateString('en-CA')
+  const { message, handleError, clearError } = HandleError()
 
   watch(() => props.open, async (isOpen) => {
     if (isOpen) {
+      clearError()
       title.value = ''
       description.value = ''
       dueDate.value = ''
@@ -25,9 +28,10 @@
   })
 
   async function save() {
+    clearError()
     if (!title.value.trim()) return
     try {
-      await api.post('/', {
+      await api.post('', {
         title: title.value.trim(),
         description: description.value,
         dueDate: dueDate.value || null,
@@ -37,7 +41,7 @@
       emit('close')
       location.reload()
     } catch (err) {
-      console.error('Failed to add task', err)
+      handleError(err, 'Failed to add task')
     }
   }
   </script>
@@ -49,9 +53,10 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs"
         @click.self="emit('close')">
         <form
-          class="flex flex-col gap-2 p-8 drop-shadow-sm bg-[#FAF2C3] w-full max-w-md"
+          class="flex flex-col gap-2 p-8 m-6 drop-shadow-sm bg-[#FAF2C3] w-full max-w-md"
           @submit.prevent="save"
           @keydown.esc="emit('close')">
+          <p v-if="message" class="text-red-500">{{ message }}</p>
           <input
             v-model="title"
             autofocus
