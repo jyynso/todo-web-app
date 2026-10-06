@@ -31,7 +31,10 @@ watch(() => props.open, async (isOpen) => {
 })
 
 async function save() {
-  if (!props.task || !title.value.trim()) return
+  if (!props.task || !title.value.trim()) {
+    message.value = 'Title is required'
+    return
+  }
   clearError()
   try {
     await api.put(`/${props.task.id}`, {
